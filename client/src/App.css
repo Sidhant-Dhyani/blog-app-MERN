@@ -87,7 +87,7 @@ input{
 }
 
 button{
-  width: 105%;
+  width: 103.5%;
   display: block;
   background-color: #555;
   border: 0;
@@ -99,3 +99,4 @@ button{
 form h1{
   text-align: center;
 }
+
