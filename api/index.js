@@ -5,13 +5,13 @@ const bcrypt = require("bcrypt");
 const User = require("./models/User");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-// const cookieParser = require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const salt = bcrypt.genSaltSync(10);
 const secret = "sidhant-blog";
 
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
-// app.use(cookieParser);
+app.use(cookieParser());
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/UsersDB")
@@ -59,8 +59,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// app.get('/profile', (req, res) => {
-//   res.json(req.cookies);
-// } )
+app.get('/profile', (req, res) => {
+  res.json(req.cookies);
+} )
 
 app.listen(3000);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+// import { Navigate } from "react-router-dom";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -14,7 +14,7 @@ export default function RegisterPage() {
     });
     if (response.status === 200) {
       alert('Registration Success.')
-      return <Navigate to={"http://localhost:5173/register"} />;
+      // return <Navigate to = {"/register"} />;
     }
     else {
       alert('Registration Failed.');
