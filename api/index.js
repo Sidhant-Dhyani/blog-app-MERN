@@ -3,13 +3,13 @@ const app = express();
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const User = require("./models/User");
-const Post = require('./models/Post');
+const Post = require("./models/Post");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const cookieParser = require('cookie-parser');
-const multer = require('multer');
-const uploadMiddleware = multer({dest: 'uploads'});
-const fs = require('fs');
+const cookieParser = require("cookie-parser");
+const multer = require("multer");
+const uploadMiddleware = multer({ dest: "uploads" });
+const fs = require("fs");
 
 const salt = bcrypt.genSaltSync(10);
 const secret = "sidhant-blog";
@@ -58,44 +58,55 @@ app.post("/login", async (req, res) => {
       if (err) throw err;
       res.cookie("token", token).json({
         id: userDoc._id,
-        username
+        username,
       });
       console.log(token);
     });
   } else {
-    res.status(400).json( { error: "Invalid login credentials" } );
+    res.status(400).json({ error: "Invalid login credentials" });
   }
 });
 
-app.get('/profile', (req, res) => {
-  const {token} = req.cookies;
+app.get("/profile", (req, res) => {
+  const { token } = req.cookies;
   jwt.verify(token, secret, {}, (err, info) => {
-    if(err) throw err;
+    if (err) throw err;
     res.json(info);
-  })
+  });
   // res.json(req.cookies);
-} );
+});
 
-app.post('/logout', (req, res) => {
-  res.cookie('token', '').json('ok');
-})
+app.post("/logout", (req, res) => {
+  res.cookie("token", "").json("ok");
+});
 
-app.post('/post', uploadMiddleware.single('file'), async (req, res) => {
-  const {originalname, path} = req.file;
-  const parts = originalname.split('.');
+app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
+  const { originalname, path } = req.file;
+  const parts = originalname.split(".");
   const ext = parts[parts.length - 1];
-  const newPath = path+'.'+ext;
+  const newPath = path + "." + ext;
   fs.renameSync(path, newPath);
 
-  const {title, summary, content} = req.body;
-  const postDoc = await Post.create({
-    title, 
-    summary,
-    content,
-    cover: newPath,
+  const { token } = req.cookies;
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) throw err;
+    const { title, summary, content } = req.body;
+    const postDoc = await Post.create({
+      title,
+      summary,
+      content,
+      cover: newPath,
+      author: info._id,
+    });
+    res.json(postDoc);
   });
+});
 
-  res.json(postDoc);
+app.get("/post", async (req, res) => {
+  // const  response= await Post.find().populate("author", ['username'])
+
+  // console.log(response)
+  // res.json(response);
 });
 
 app.listen(3000);

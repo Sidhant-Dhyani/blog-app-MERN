@@ -46,7 +46,7 @@ export default function CreatePost() {
     data.set("file", files[0]);
     ev.preventDefault();
     console.log(files);
-    const response = await fetch("http://localhost:3000/post", { method: "POST", body: data });
+    const response = await fetch("http://localhost:3000/post", { method: "POST", body: data, credentials: 'include'});
     if(response.ok) {
         setRedirect(true);
     }
