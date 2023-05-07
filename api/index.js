@@ -14,6 +14,8 @@ const fs = require("fs");
 const salt = bcrypt.genSaltSync(10);
 const secret = "sidhant-blog";
 
+app.use('/uploads', express.static(__dirname + '/uploads'));
+
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
 app.use(cookieParser());
@@ -81,6 +83,7 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
+  console.log(req.file)
   const { originalname, path } = req.file;
   const parts = originalname.split(".");
   const ext = parts[parts.length - 1];
@@ -88,7 +91,10 @@ app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
   fs.renameSync(path, newPath);
 
   const { token } = req.cookies;
+  console.log("cookies", req.cookies)
   jwt.verify(token, secret, {}, async (err, info) => {
+
+    console.log( "info" , info)
     if (err) throw err;
     const { title, summary, content } = req.body;
     const postDoc = await Post.create({
@@ -96,17 +102,14 @@ app.post("/post", uploadMiddleware.single("file"), async (req, res) => {
       summary,
       content,
       cover: newPath,
-      author: info._id,
+      author: info.id,
     });
     res.json(postDoc);
   });
 });
 
 app.get("/post", async (req, res) => {
-  // const  response= await Post.find().populate("author", ['username'])
-
-  // console.log(response)
-  // res.json(response);
+  res.json(await Post.find().populate("author", ['username']).sort({createdAt: -1}).limit(20));
 });
 
 app.listen(3000);

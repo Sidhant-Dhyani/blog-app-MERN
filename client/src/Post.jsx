@@ -1,14 +1,12 @@
 import {formatISO9075} from "date-fns"; 
 
-
 export default function Post({title, content, cover, summary, createdAt, author}) {
-  console.log('author:', author);
-  console.log('author.username:', author.username);
+  
   return (
     <div className="post" >
       <div className="image">
         <img
-          src="https://bikeindia.in/wp-content/uploads/2023/04/Norden-013.jpg"
+          src={'http://localhost:3000/'+ cover}
           alt=""
         />
       </div>
