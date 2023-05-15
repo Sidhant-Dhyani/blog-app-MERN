@@ -26,7 +26,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/UsersDB")
+  .connect(process.env.MONGO_ATLAS_URL)
   .then(() => {
     console.log("connected to database");
   })
